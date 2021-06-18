@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+    <title>Document</title>
+  </head>
+  <body onLoad="onLoad()">
+    <div
+      class="
+        vh-100
+        d-flex
+        justify-content-center
+        align-items-center
+        bg-info
+        flex-column
+      "
+    >
+      <button id="led1" onclick="handleClick(this.id)" class="btn m-2">
+        Toggle LED 1
+      </button>
+      <button id="led2" onclick="handleClick(this.id)" class="btn m-2">
+        Toggle LED 2
+      </button>
+    </div>
+  </body>
+  <script type="text/javascript">
+    const onLoad = async () => {
+      const result = await fetch(`/api/status`, { method: "GET" })
+        .then((response) => {
+          console.log(response.status);
+          return response.status === 200 ? response.text() : "error";
+        })
+        .catch((error) => {
+          return "error";
+        });
+      let status = result.split(",");
+      console.log(status);
+      if (status[0] === "true") {
+        document.getElementById("led1").classList.add("btn-primary");
+      } else {
+        document.getElementById("led1").classList.add("btn-secondary");
+      }
+      if (status[1] === "true") {
+        document.getElementById("led2").classList.add("btn-primary");
+      } else {
+        document.getElementById("led2").classList.add("btn-secondary");
+      }
+    };
+    const handleClick = async (id) => {
+      const result = await fetch(`/api/${id}`, { method: "GET" })
+        .then((response) => {
+          console.log(response.status);
+          return response.status === 200 ? response.text() : "error";
+        })
+        .catch((error) => {
+          return "error";
+        });
+
+      console.log(result);
+      if (document.getElementById(id).classList.contains("btn-primary"))
+        document
+          .getElementById(id)
+          .classList.replace("btn-primary", "btn-secondary");
+      else if (document.getElementById(id).classList.contains("btn-secondary"))
+        document
+          .getElementById(id)
+          .classList.replace("btn-secondary", "btn-primary");
+    };
+  </script>
+</html>
