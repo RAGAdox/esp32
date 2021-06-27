@@ -27,6 +27,6 @@ app.get("/", (req, res) => {
 });
 //Allow to server to listen to port 8000 for requests
 app.listen(
-  process.env.PORT || 8001,
-  console.log("Server Started on port " + (process.env.PORT || 8000))
+  process.env.PORT || 6000,
+  console.log("Server Started on port " + (process.env.PORT || 6000))
 );
