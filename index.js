@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const app = express();
@@ -8,8 +9,11 @@ app.use(express.static(path.join(__dirname, "public")));
 /*
   We are creating end points to access the current values of the variables led1 and led2
 */
-app.get("/api/status", (req, res) => {
+app.get("/api/status_text", (req, res) => {
   return res.send(led1 + "," + led2);
+});
+app.get("/api/status_json", (req, res) => {
+  return res.json({ led1: led1, led2: led2 });
 });
 // End point to change the value of led1
 app.get("/api/led1", (req, res) => {
