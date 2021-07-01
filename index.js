@@ -4,26 +4,47 @@ const path = require("path");
 const app = express();
 let led1 = false;
 let led2 = false;
+let streamResponse = undefined;
+let number = 0;
 //Middleware to set a static directory
 app.use(express.static(path.join(__dirname, "public")));
-/*
-  We are creating end points to access the current values of the variables led1 and led2
-*/
-app.get("/api/status_text", (req, res) => {
-  return res.send(led1 + "," + led2);
+//Stream Values of LED1 and LED2 into Arduino
+app.get("/api/stream", (req, res) => {
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+  });
+  streamResponse = res;
+  send(streamResponse);
+  streamResponse.on("close", () => {
+    streamResponse = undefined;
+    console.log("Client Server Connection was closed");
+  });
 });
-app.get("/api/status_json", (req, res) => {
-  return res.json({ led1: led1, led2: led2 });
-});
+
+const send = (res) => {
+  res.write(`data: ${led1},${led2}` + "\n\n");
+};
 // End point to change the value of led1
 app.get("/api/led1", (req, res) => {
-  led1 = !led1;
-  return res.send(led1 + "," + led2);
+  if (streamResponse !== undefined) {
+    led1 = !led1;
+    send(streamResponse);
+    return res.send(led1 + "," + led2);
+  } else {
+    return res.send("Client Server Connection is not established");
+  }
 });
 // End point to change the value of led2
 app.get("/api/led2", (req, res) => {
-  led2 = !led2;
-  return res.send(led1 + "," + led2);
+  if (streamResponse !== undefined) {
+    led2 = !led2;
+    send(streamResponse);
+    return res.send(led1 + "," + led2);
+  } else {
+    return res.send("Client Server Connection is not established");
+  }
 });
 // SEND index.html to the browser when / is requested
 app.get("/", (req, res) => {

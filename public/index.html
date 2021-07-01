@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
 
-  <body onLoad="fetchStatus()">
+  <body onLoad="fetchStream()">
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark px-3">
       <a class="navbar-brand" href="#">ESP 32</a>
       <button
@@ -95,6 +95,12 @@
     ></script>
 
     <script type="text/javascript">
+      const fetchStream = async () => {
+        let source = new EventSource("/api/stream");
+        source.addEventListener("message", function (e) {
+          console.log(e.data);
+        });
+      };
       const fetchStatus = async () => {
         const result = await fetch(`/api/status_json`, { method: "GET" })
           .then((response) => {
