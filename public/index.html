@@ -70,6 +70,18 @@
           <button id="led2" onclick="handleClick(this.id)" class="btn m-2">
             Toggle LED 2
           </button>
+          <table class="table table-dark w-50 rounded shadow-lg">
+            <thead>
+              <th scope="col" class="text-center">LED 1</th>
+              <th scope="col" class="text-center">LED 2</th>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="led1_status" class="text-center"></td>
+                <td id="led2_status" class="text-center"></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </main>
@@ -109,6 +121,9 @@
         document
           .getElementById("led1")
           .classList.toggle("btn-secondary", !result.led1);
+        document.getElementById("led1_status").innerText = result.led1
+          ? "ON"
+          : "OFF";
 
         document
           .getElementById("led2")
@@ -116,14 +131,24 @@
         document
           .getElementById("led2")
           .classList.toggle("btn-secondary", !result.led2);
+        document.getElementById("led2_status").innerText = result.led2
+          ? "ON"
+          : "OFF";
       };
       const handleClick = async (id) => {
         const result = await fetch(`/api/${id}`, { method: "GET" })
           .then((response) => {
             fetchStatus();
+            return response.json();
           })
           .catch((error) => {
             return "error";
+          })
+          .then((response) => {
+            if (response && response.error) {
+              alert(response.error);
+              console.log(response.error);
+            }
           });
       };
     </script>
